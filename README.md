@@ -1,4 +1,4 @@
-# info_retrieve_database_01
+# inforetrievaldatabase01
 
-Research project files and code for project testing search queries on various 
+Research project files and code for project testing search queries on MEDLINE
 databases.
