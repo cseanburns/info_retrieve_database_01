@@ -129,5 +129,5 @@ ovidoutliers(modz, ovid)
 library("xtable")
 modztable <- as.data.frame(round(modz[, -1], 3))
 
-# convert to odt with pandoc
+# in Bash, convert to odt with pandoc
 print(xtable(modztable), file = "docs/table1.tex")
