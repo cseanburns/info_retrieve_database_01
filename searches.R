@@ -48,8 +48,7 @@ modz[c(16, 17, 19, 20), ] <- c(0, 0, 0, 0)
 library("corrplot")
 modcor <- modz[, -1]
 modcor <- cor(modcor, method = "spearman")
-png("corrplot.png", height = 9, width = 9, units = "in",
-    res = 300)
+png("plots/corrplot.png", height = 9, width = 9, units = "in", res = 300)
 corrplot.mixed(modcor, upper = "ellipse", number.cex = 1.0,
                addgrid.col = "grey", lower.col = "black",
                upper.col = grey.colors(100))
@@ -73,7 +72,7 @@ mz3 <- ggplot(modz, aes(x = pubmed, y = wos)) +
 mz4 <- ggplot(modz, aes(x = pubmed, y = ovid)) +
   geom_point() + labs(x = "PubMed", y = "Ovid") + theme_bw()
 
-png("multi-point-plot.png", height = 9, width = 9, units = "in",
-       res = 300)
+png("plots/multi-point-plot.png", height = 9, width = 9,
+    units = "in", res = 300)
 grid.arrange(mz1, mz2, mz3, mz4, ncol = 2, nrow = 2)
 dev.off()
