@@ -1,3 +1,5 @@
+# These are the search numbers for the 29 sets
+# The order is PubMed, ProQuest, EBSCOhost, Web of Science, Ovid
 s01 <- c(2455040, 2467649, 2467319, 2462216, 2452952)
 s02 <- c(388673, 388527, 388411, 387839, 388384)
 s03 <- c(2250992, 2238672, 2238971, 2238089, 2232456)
