@@ -126,8 +126,9 @@ ovidoutliers <- function(modz, ovid) {
 
 ovidoutliers(modz, ovid)
 
+# Save as table for incorporating into LibreOffice
 library("xtable")
 modztable <- as.data.frame(round(modz[, -1], 3))
 
-# in Bash, convert to odt with pandoc
+# In Bash, convert to odt with pandoc
 print(xtable(modztable), file = "docs/table1.tex")
