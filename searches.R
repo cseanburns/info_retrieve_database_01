@@ -61,7 +61,7 @@ mz3 <- ggplot(modz, aes(x = pubmed, y = wos)) +
 mz4 <- ggplot(modz, aes(x = pubmed, y = ovid)) +
   geom_point() + labs(x = "PubMed", y = "Ovid") + theme_bw()
 
-png("plots/multi-point-plot.png", height = 9, width = 9,
+png("plots/figure-1.png", height = 9, width = 9,
     units = "in", res = 300)
 grid.arrange(mz1, mz2, mz3, mz4, ncol = 2, nrow = 2)
 dev.off()
