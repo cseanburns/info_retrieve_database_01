@@ -1,4 +1,4 @@
-#Read search counts
+# Read search counts
 source("data.R")
 
 # Combine search counts
@@ -56,116 +56,117 @@ library("svglite")
 library("gridExtra")
 
 ##### FIGURE 1: Raw Scores #####
-
-svg("plots/figure-1-raw.svg", height = 9, width = 12)
+# `options` will avoid scientific notation
+options(scipen = 10000)
 raw1 <- ggplot(searches, aes(searchset, proquest)) +
   geom_col() +
-  labs(x = "", y = "ProQuest") + theme_bw() +
+  labs(x = "Search Set", y = "ProQuest") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
-                                   colour = "black"))
+                                   colour = "black")) +
+theme(axis.text.y = element_text(size = 10))
 
 raw2 <- ggplot(searches, aes(searchset, ebscohost)) +
   geom_col() +
-  labs(x = "", y = "EBSCOhost") + theme_bw() +
+  labs(x = "Search Set", y = "EBSCOhost") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
-                                   colour = "black"))
+                                   colour = "black")) +
+theme(axis.text.y = element_text(size = 10))
 
 raw3 <- ggplot(searches, aes(searchset, wos)) +
   geom_col() +
-  labs(x = "Search Set", y = "Web of Science") + theme_bw() +
+  labs(x = "Search Set", y = "Web of Science") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
-                                   colour = "black"))
+                                   colour = "black")) +
+theme(axis.text.y = element_text(size = 10))
 
 raw4 <- ggplot(searches, aes(searchset, ovid)) +
   geom_col() +
-  labs(x = "Search Set", y = "Ovid") + theme_bw() +
+  labs(x = "Search Set", y = "Ovid") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
-                                   colour = "black"))
+                                   colour = "black")) +
+theme(axis.text.y = element_text(size = 10))
 
-grid.arrange(raw1, raw2, raw3, raw4, ncol = 2, nrow = 2)
-dev.off()
+fig1 <- grid.arrange(raw1, raw2, raw3, raw4, ncol = 2, nrow = 2)
+ggsave("plots/figure-1-raw.svg", plot = fig1, height = 9,
+       width = 12, dpi = 300)
 
 ##### FIGURE 2: Raw Score Diffs from PubMed MEDLINE #####
-
-svg("plots/figure-2-raw-diffs.svg", height = 9, width = 12)
-
 raw1.diff <- ggplot(searches, aes(searchset, proquest - pubmed)) +
   geom_col() +
-  labs(x = "", y = "ProQuest") + theme_bw() +
+  labs(x = "Search Set", y = "ProQuest") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
 raw2.diff <- ggplot(searches, aes(searchset, ebscohost - pubmed)) +
   geom_col() +
-  labs(x = "", y = "EBSCOhost") + theme_bw() +
+  labs(x = "Search Set", y = "EBSCOhost") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
 raw3.diff <- ggplot(searches, aes(searchset, wos - pubmed)) +
   geom_col() +
-  labs(x = "Search Set", y = "Web of Science") + theme_bw() +
+  labs(x = "Search Set", y = "Web of Science") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
 raw4.diff <- ggplot(searches, aes(searchset, ovid - pubmed)) +
   geom_col() +
-  labs(x = "Search Set", y = "Ovid") + theme_bw() +
+  labs(x = "Search Set", y = "Ovid") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
-grid.arrange(raw1.diff, raw2.diff, raw3.diff, raw4.diff, ncol = 2, nrow = 2)
-dev.off()
+fig2 <- grid.arrange(raw1.diff, raw2.diff, raw3.diff, raw4.diff,
+                     ncol = 2, nrow = 2)
+ggsave("plots/figure-2-raw-diffs.svg", plot = fig2,
+       height = 9, width = 12, dpi = 300)
 
 ##### FIGURE 3: Modified z scores #####
-  
-svg("plots/figure-3-modz-scores.svg", height = 9, width = 12)
-
 # Remove extreme outliers
 modz1 <- subset(modz, proquest <= 3.5 & proquest >= -3.5)
 mz1 <- ggplot(modz1, aes(searchset, proquest)) + geom_col() +
-  labs(x = "", y = "ProQuest") + theme_bw() +
+  labs(x = "Search Set", y = "ProQuest") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
 modz2 <- subset(modz, ebscohost <= 3.5 & ebscohost >= -3.5)
 mz2 <- ggplot(modz2, aes(searchset, ebscohost)) + geom_col() +
-  labs(x = "", y = "EBSCOhost") + theme_bw() +
+  labs(x = "Search Set", y = "EBSCOhost") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
 modz3 <- subset(modz, wos <= 3.5 & wos >= -3.5)
 mz3 <- ggplot(modz3, aes(searchset, wos)) + geom_col() +
-  labs(x = "Search Set", y = "Web of Science") + theme_bw() +
+  labs(x = "Search Set", y = "Web of Science") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
 modz4 <- subset(modz, ovid <= 3.5 & ovid >= -3.5)
 mz4 <- ggplot(modz4, aes(searchset, ovid)) + geom_col() +
-  labs(x = "Search Set", y = "Ovid") + theme_bw() +
+  labs(x = "Search Set", y = "Ovid") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
-grid.arrange(mz1, mz2, mz3, mz4, ncol = 2, nrow = 2)
-dev.off()
+fig3 <- grid.arrange(mz1, mz2, mz3, mz4, ncol = 2, nrow = 2)
+ggsave("plots/figure-3-modz-scores.svg", plot = fig3,
+       height = 9, width = 12, dpi = 300)
 
 ##### FIGURE 4: ProQuest Extreme Outliers #####
- 
 # Plot ProQuest extreme outliers
 modz1prouqestoutliers <- subset(modz, proquest >= 3.5 | proquest <= -3.5)
 modzpqout <- ggplot(modz1prouqestoutliers, aes(searchset, proquest)) +
-  geom_col() + labs(x = "", y = "ProQuest") + theme_bw() +
+  geom_col() + labs(x = "", y = "ProQuest") + theme_bw() + coord_flip() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, colour = "black"))
 modzpqout
 ggsave("plots/figure-4-proquest-extreme-outliers.svg", height = 9, width = 12,
@@ -174,9 +175,9 @@ ggsave("plots/figure-4-proquest-extreme-outliers.svg", height = 9, width = 12,
 ##### FIGURE 5: Web of Science Extreme Outliers #####
 
 modz3wosoutliers <- subset(modz, wos >= 3.5 | wos <= -3.5)
-modzwosout <- ggplot(modz3wosoutliers, aes(searchset, proquest)) +
+modzwosout <- ggplot(modz3wosoutliers, aes(searchset, wos)) +
   geom_col() +
-  labs(x = "", y = "Web of Science") + theme_bw() +
+  labs(x = "", y = "Web of Science") + theme_bw() + coord_flip() +
        theme(axis.text.x =
              element_text(angle = 45, hjust = 1, colour = "black"))
 modzwosout
