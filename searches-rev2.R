@@ -58,6 +58,14 @@ library("gridExtra")
 ##### FIGURE 1: Raw Scores #####
 # `options` will avoid scientific notation
 options(scipen = 10000)
+raw0 <- ggplot(searches, aes(searchset, proquest)) +
+  geom_col() +
+  labs(x = "Search Set", y = "PubMed") + theme_bw() + coord_flip() +
+       theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1,
+                                   colour = "black")) +
+theme(axis.text.y = element_text(size = 10))
+
 raw1 <- ggplot(searches, aes(searchset, proquest)) +
   geom_col() +
   labs(x = "Search Set", y = "ProQuest") + theme_bw() + coord_flip() +
@@ -90,7 +98,7 @@ raw4 <- ggplot(searches, aes(searchset, ovid)) +
                                    colour = "black")) +
 theme(axis.text.y = element_text(size = 10))
 
-fig1 <- grid.arrange(raw1, raw2, raw3, raw4, ncol = 2, nrow = 2)
+fig1 <- grid.arrange(raw0, raw1, raw2, raw3, raw4, ncol = 3, nrow = 2)
 ggsave("plots/figure-1-raw.svg", plot = fig1, height = 9,
        width = 12, dpi = 300)
 
