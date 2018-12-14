@@ -17,7 +17,7 @@ searches$searchset <- rownames(searches)
 rm(s01, s02, s03, s04, s05, s06, s07, s08, s09, s10, s11, s12, s13, s14, s15,
    s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29)
 
-# Calculate modified z-score *m_i*
+# Calculate modified z-score $m_i$
 # function based on pubmed count and not median as center
 modz <- function(searches, x) {
   s     <- as.numeric(searches[x, 1:5])
@@ -27,8 +27,7 @@ modz <- function(searches, x) {
   return(smodz)
 }
 
-# save output of for loop into a dataframe
-# bless this package!
+# save output of for loop into a dataframe; bless this package!
 library("magicfor")
 magic_for(print, silent = TRUE)
 
@@ -55,12 +54,12 @@ library("ggplot2")
 library("svglite")
 library("gridExtra")
 
+##### FIGURE 1: Raw Scores #####
 # To convert 'searches' data frame in long format for grouped bar chart
 library(reshape2)
 searcheslong <- melt(searches, id = "searchset")
 colnames(searcheslong) <- c("searchset", "databases", "searchcount")
 
-##### FIGURE 1: Raw Scores #####
 # `options` will avoid scientific notation
 options(scipen = 10000)
 
@@ -80,7 +79,6 @@ ggsave("plots/figure-1-raw.svg", plot = fig1, height = 9,
        width = 12, dpi = 300)
 
 ##### FIGURE 2: Raw Score Diffs from PubMed MEDLINE #####
-
 raw1.diff <- ggplot(searches, aes(searchset, proquest - pubmed)) +
   geom_col() +
   labs(x = "Search Set", y = "ProQuest") + theme_bw() + coord_flip() +
@@ -159,7 +157,6 @@ ggsave("plots/figure-4-proquest-extreme-outliers.svg", height = 9, width = 12,
        dpi = 300)
 
 ##### FIGURE 5: Web of Science Extreme Outliers #####
-
 modz3wosoutliers <- subset(modz, wos >= 3.5 | wos <= -3.5)
 modzwosout <- ggplot(modz3wosoutliers, aes(searchset, wos)) +
   geom_col() +
