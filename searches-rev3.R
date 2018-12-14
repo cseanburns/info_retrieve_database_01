@@ -172,9 +172,9 @@ library("xtable")
 modztable <- as.data.frame(round(modz[, c(2, 3, 4, 5)], 3))
 
 searchdiffs <- as.data.frame(cbind(searches$proquest - searches$pubmed,
-                               searches$ebscohost - searches$pubmed,
-                               searches$wos - searches$pubmed,
-                               searches$ovid - searches$pubmed))
+                                   searches$ebscohost - searches$pubmed,
+                                   searches$wos - searches$pubmed,
+                                   searches$ovid - searches$pubmed))
 
 colnames(searchdiffs) <- c("proquest", "ebscohost", "wos", "Ovid")
 
