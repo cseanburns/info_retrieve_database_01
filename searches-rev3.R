@@ -56,26 +56,114 @@ library("gridExtra")
 
 ##### FIGURE 1: Raw Scores #####
 # To convert 'searches' data frame in long format for grouped bar chart
-library(reshape2)
+library("dplyr")
+library("reshape2")
 searcheslong <- melt(searches, id = "searchset")
 colnames(searcheslong) <- c("searchset", "databases", "searchcount")
 
 # `options` will avoid scientific notation
 options(scipen = 10000)
 
-fig1 <- ggplot(searcheslong, aes(searchset, searchcount)) +
+# 1a: Separate high counts to help with scaling
+fighighcounts <- filter(searcheslong,
+                        searchset == "s01" |
+                        searchset == "s03" |
+                        searchset == "s08")
+
+fig1hc <- ggplot(fighighcounts, aes(searchset, searchcount)) +
+  geom_bar(aes(fill = databases), width = 0.4,
+           position = position_dodge(width = 0.5),
+           stat = "identity") + labs(x = "", y = "Search Counts") +
+theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust = 1,
+                                              colour = "black")) +
+theme(axis.text.y = element_text(size = 10)) +
+scale_fill_grey(name = "Databases",
+               breaks = c("pubmed", "proquest", "ebscohost",
+                          "wos", "ovid"),
+               labels = c("PubMed", "ProQuest", "EBSCOhost",
+                          "WoS", "Ovid"))
+
+# 1b: Separate high moderate counts to help with scaling
+figmodcounts <- filter(searcheslong,
+                        searchset == "s02" |
+                        searchset == "s04")
+
+fig1mc <- ggplot(figmodcounts, aes(searchset, searchcount)) +
+  geom_bar(aes(fill = databases), width = 0.4,
+           position = position_dodge(width = 0.5),
+           stat = "identity") + labs(x = "", y = "") +
+theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust = 1,
+                                              colour = "black")) +
+theme(axis.text.y = element_text(size = 10)) +
+scale_fill_grey(guide = FALSE, name = "Databases",
+               breaks = c("pubmed", "proquest", "ebscohost",
+                          "wos", "ovid"),
+               labels = c("PubMed", "ProQuest", "EBSCOhost",
+                          "WoS", "Ovid"))
+
+# 1c: Separate low moderate counts to help with scaling
+figmidcounts <- filter(searcheslong,
+                       searchset == "s06" |
+                       searchset == "s09" |
+                       searchset == "s10" |
+                       searchset == "s12" |
+                       searchset == "s15" |
+                       searchset == "s21" |
+                       searchset == "s22" |
+                       searchset == "s23" |
+                       searchset == "s28" |
+                       searchset == "s29")
+
+fig1mic <- ggplot(figmidcounts, aes(searchset, searchcount)) +
   geom_bar(aes(fill = databases), width = 0.4,
            position = position_dodge(width = 0.5),
            stat = "identity") + labs(x = "Search Set", y = "Search Counts") +
 theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust = 1,
                                               colour = "black")) +
 theme(axis.text.y = element_text(size = 10)) +
-scale_fill_hue(name = "Databases",
+scale_fill_grey(name = "Databases",
                breaks = c("pubmed", "proquest", "ebscohost",
                           "wos", "ovid"),
                labels = c("PubMed", "ProQuest", "EBSCOhost",
                           "WoS", "Ovid"))
+
+# 1d: Separate low counts to help with scaling
+figlowcounts <- filter(searcheslong,
+                       searchset != "s01" &
+                       searchset != "s03" &
+                       searchset != "s02" &
+                       searchset != "s04" &
+                       searchset != "s06" &
+                       searchset != "s08" &
+                       searchset != "s09" &
+                       searchset != "s10" &
+                       searchset != "s12" &
+                       searchset != "s15" &
+                       searchset != "s21" &
+                       searchset != "s22" &
+                       searchset != "s23" &
+                       searchset != "s28" &
+                       searchset != "s29")
+
+fig1lc <- ggplot(figlowcounts, aes(searchset, searchcount)) +
+  geom_bar(aes(fill = databases), width = 0.4,
+           position = position_dodge(width = 0.5),
+           stat = "identity") + labs(x = "Search Set", y = "") +
+theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust = 1,
+                                              colour = "black")) +
+theme(axis.text.y = element_text(size = 10)) +
+scale_fill_grey(guide = FALSE, name = "Databases",
+               breaks = c("pubmed", "proquest", "ebscohost",
+                          "wos", "ovid"),
+               labels = c("PubMed", "ProQuest", "EBSCOhost",
+                          "WoS", "Ovid"))
+
+fig1 <- grid.arrange(fig1hc, fig1mc, fig1mic, fig1lc, ncol = 2, nrow = 2)
+
 ggsave("plots/figure-1-raw.svg", plot = fig1, height = 9,
+       width = 12, dpi = 300)
+
+ggsave("plots/figure-1-raw.png", plot = fig1, device = png(), height = 9,
        width = 12, dpi = 300)
 
 ##### FIGURE 2: Raw Score Diffs from PubMed MEDLINE #####
@@ -88,7 +176,7 @@ raw1.diff <- ggplot(searches, aes(searchset, proquest - pubmed)) +
 
 raw2.diff <- ggplot(searches, aes(searchset, ebscohost - pubmed)) +
   geom_col() +
-  labs(x = "Search Set", y = "EBSCOhost") + theme_bw() + coord_flip() +
+  labs(x = "", y = "EBSCOhost") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
@@ -102,7 +190,7 @@ raw3.diff <- ggplot(searches, aes(searchset, wos - pubmed)) +
 
 raw4.diff <- ggplot(searches, aes(searchset, ovid - pubmed)) +
   geom_col() +
-  labs(x = "Search Set", y = "Ovid") + theme_bw() + coord_flip() +
+  labs(x = "", y = "Ovid") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
@@ -110,6 +198,9 @@ raw4.diff <- ggplot(searches, aes(searchset, ovid - pubmed)) +
 fig2 <- grid.arrange(raw1.diff, raw2.diff, raw3.diff, raw4.diff,
                      ncol = 2, nrow = 2)
 ggsave("plots/figure-2-raw-diffs.svg", plot = fig2,
+       height = 9, width = 12, dpi = 300)
+
+ggsave("plots/figure-2-raw-diffs.png", device = png(), plot = fig2,
        height = 9, width = 12, dpi = 300)
 
 ##### FIGURE 3: Modified z scores #####
@@ -123,7 +214,7 @@ mz1 <- ggplot(modz1, aes(searchset, proquest)) + geom_col() +
 
 modz2 <- subset(modz, ebscohost <= 3.5 & ebscohost >= -3.5)
 mz2 <- ggplot(modz2, aes(searchset, ebscohost)) + geom_col() +
-  labs(x = "Search Set", y = "EBSCOhost") + theme_bw() + coord_flip() +
+  labs(x = "", y = "EBSCOhost") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
@@ -137,7 +228,7 @@ mz3 <- ggplot(modz3, aes(searchset, wos)) + geom_col() +
 
 modz4 <- subset(modz, ovid <= 3.5 & ovid >= -3.5)
 mz4 <- ggplot(modz4, aes(searchset, ovid)) + geom_col() +
-  labs(x = "Search Set", y = "Ovid") + theme_bw() + coord_flip() +
+  labs(x = "", y = "Ovid") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
@@ -146,6 +237,10 @@ fig3 <- grid.arrange(mz1, mz2, mz3, mz4, ncol = 2, nrow = 2)
 ggsave("plots/figure-3-modz-scores.svg", plot = fig3,
        height = 9, width = 12, dpi = 300)
 
+ggsave("plots/figure-3-modz-scores.png", plot = fig3, device = png(),
+       height = 9, width = 12, dpi = 300)
+
+##### COMBINE FIGs 4 and 5 #####
 ##### FIGURE 4: ProQuest Extreme Outliers #####
 # Plot ProQuest extreme outliers
 modz1prouqestoutliers <- subset(modz, proquest >= 3.5 | proquest <= -3.5)
@@ -155,6 +250,9 @@ modzpqout <- ggplot(modz1prouqestoutliers, aes(searchset, proquest)) +
 modzpqout
 ggsave("plots/figure-4-proquest-extreme-outliers.svg", height = 9, width = 12,
        dpi = 300)
+
+ggsave("plots/figure-4-proquest-extreme-outliers.png", device = png(),
+       height = 9, width = 12, dpi = 300)
 
 ##### FIGURE 5: Web of Science Extreme Outliers #####
 modz3wosoutliers <- subset(modz, wos >= 3.5 | wos <= -3.5)
@@ -166,6 +264,9 @@ modzwosout <- ggplot(modz3wosoutliers, aes(searchset, wos)) +
 modzwosout
 ggsave("plots/figure-5-wos-extreme-outliers.svg", height = 9, width = 12,
        dpi = 300)
+
+ggsave("plots/figure-5-wos-extreme-outliers.png", device = png(),
+       height = 9, width = 12, dpi = 300)
 
 # Save data as tables tables and incorporate into LibreOffice
 library("xtable")
@@ -179,7 +280,7 @@ searchdiffs <- as.data.frame(cbind(searches$proquest - searches$pubmed,
 colnames(searchdiffs) <- c("proquest", "ebscohost", "wos", "Ovid")
 
 searchdiffs$searchset <- rownames(searches)
- 
+
 # In Bash, convert to odt with pandoc; e.g.:
 # pandoc -o table1.odt table1.tex
 print(xtable(searches),
