@@ -240,7 +240,6 @@ ggsave("plots/figure-3-modz-scores.svg", plot = fig3,
 ggsave("plots/figure-3-modz-scores.png", plot = fig3, device = png(),
        height = 9, width = 12, dpi = 300)
 
-##### COMBINE FIGs 4 and 5 #####
 ##### FIGURE 4: ProQuest Extreme Outliers #####
 # Plot ProQuest extreme outliers
 modz1prouqestoutliers <- subset(modz, proquest >= 3.5 | proquest <= -3.5)
