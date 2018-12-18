@@ -18,7 +18,7 @@ sed 's/$/ \<\- c\(/' searchstrings > searchstrings.rev1
 # Set up query search counts
 # 1. remove empty lines
 # 2. add closing parenthesis after every 5th line
-# 3. add comman after lines ending in numbers
+# 3. add comma after lines ending in numbers
 # 4. remove newlines ending w/ comma to create single line
 sed '/^[[:space:]]*$/d' queries.csv |\
   sed '0~5 s/$/\)/' |\
