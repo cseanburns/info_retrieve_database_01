@@ -3,5 +3,6 @@ docs/
 literature/
 plots/
 poster/
+tables/table*.odt
 .RData
 .Rhistory
