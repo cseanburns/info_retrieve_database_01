@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Downloaded data as a spreadsheet and removed all unnecessary columns in
+# LibreOffice Calc. Result is a single column of search results (numbers) but
+# in order by set and by database
+#
+# This Bash script creates the data.R file 
+
+## File 1
+# Create a list of strings for creating the R data frame 
+for i in $(seq -w 1 29) ; do echo s"$i" >> searchstrings ; done
+
+# Set up R input statement
+sed 's/$/ \<\- c\(/' searchstrings > searchstrings.rev1
+
+## File 2
+
+# Set up query search counts
+# 1. remove empty lines
+# 2. add closing parenthesis after every 5th line
+# 3. add comman after lines ending in numbers
+# 4. remove newlines ending w/ comma to create single line
+sed '/^[[:space:]]*$/d' queries.csv |\
+  sed '0~5 s/$/\)/' |\
+  sed '/[0-9]$/s/$/,/' |\
+  sed -z 's/,\n/,/g' > queries-rev1.R
+
+# Combine the two files
+paste -d "" searchstrings.rev1 queries-rev1.R > data.R
+
+# Remove unneeded temporary files
+/bin/rm searchstrings searchstrings.rev1 queries-rev1.R
