@@ -28,5 +28,5 @@ sed '/^[[:space:]]*$/d' queries.csv |\
 # Combine the two files
 paste -d "" searchstrings.rev1 queries-rev1.R > data.R
 
-# Remove unneeded temporary files
+# Remove temporary files
 /bin/rm searchstrings searchstrings.rev1 queries-rev1.R
