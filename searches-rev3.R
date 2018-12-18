@@ -43,7 +43,7 @@ colnames(modz) <- c("pubmed", "proquest", "ebscohost", "wos", "ovid")
 
 # Replace NaNs and Infs with 0 to show perfect correlation since they are
 # perfectly or nearly perfectly correlated
-modz[c(16, 17, 19, 20), ] <- c(0, 0, 0, 0)
+modz[c(13, 16, 17, 20), ] <- c(0, 0, 0, 0)
 
 # Create column for search sets
 modz$searchset <- rownames(searches)
@@ -166,6 +166,8 @@ ggsave("plots/figure-1-raw.svg", plot = fig1, height = 9,
 ggsave("plots/figure-1-raw.png", plot = fig1, device = png(), height = 9,
        width = 12, dpi = 300)
 
+dev.off()
+
 ##### FIGURE 2: Raw Score Diffs from PubMed MEDLINE #####
 raw1.diff <- ggplot(searches, aes(searchset, proquest - pubmed)) +
   geom_col() +
@@ -197,37 +199,44 @@ raw4.diff <- ggplot(searches, aes(searchset, ovid - pubmed)) +
 
 fig2 <- grid.arrange(raw1.diff, raw2.diff, raw3.diff, raw4.diff,
                      ncol = 2, nrow = 2)
-ggsave("plots/figure-2-raw-diffs.svg", plot = fig2,
-       height = 9, width = 12, dpi = 300)
 
-ggsave("plots/figure-2-raw-diffs.png", device = png(), plot = fig2,
-       height = 9, width = 12, dpi = 300)
+ggsave("plots/figure-2-raw-diffs.svg", plot = fig2, height = 9, width = 12,
+       dpi = 300)
+
+ggsave("plots/figure-2-raw-diffs.png", device = png(), plot = fig2, height = 9,
+       width = 12, dpi = 300)
+
+dev.off()
 
 ##### FIGURE 3: Modified z scores #####
 # Remove extreme outliers
 modz1 <- subset(modz, proquest <= 3.5 & proquest >= -3.5)
-mz1 <- ggplot(modz1, aes(searchset, proquest)) + geom_col() +
+mz1 <- ggplot(modz1, aes(searchset, proquest, label = round(proquest, 2))) +
+  geom_col() + geom_text() +
   labs(x = "Search Set", y = "ProQuest") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
 modz2 <- subset(modz, ebscohost <= 3.5 & ebscohost >= -3.5)
-mz2 <- ggplot(modz2, aes(searchset, ebscohost)) + geom_col() +
+mz2 <- ggplot(modz2, aes(searchset, ebscohost, label = round(ebscohost, 2))) +
+  geom_col() + geom_text() +
   labs(x = "", y = "EBSCOhost") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
 modz3 <- subset(modz, wos <= 3.5 & wos >= -3.5)
-mz3 <- ggplot(modz3, aes(searchset, wos)) + geom_col() +
+mz3 <- ggplot(modz3, aes(searchset, wos, label = round(wos, 2))) +
+  geom_col() + geom_text() +
   labs(x = "Search Set", y = "Web of Science") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
 modz4 <- subset(modz, ovid <= 3.5 & ovid >= -3.5)
-mz4 <- ggplot(modz4, aes(searchset, ovid)) + geom_col() +
+mz4 <- ggplot(modz4, aes(searchset, ovid, label = round(ovid, 2))) +
+  geom_col() + geom_text() +
   labs(x = "", y = "Ovid") + theme_bw() + coord_flip() +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
@@ -240,11 +249,15 @@ ggsave("plots/figure-3-modz-scores.svg", plot = fig3,
 ggsave("plots/figure-3-modz-scores.png", plot = fig3, device = png(),
        height = 9, width = 12, dpi = 300)
 
+dev.off()
+
 ##### FIGURE 4: ProQuest Extreme Outliers #####
 # Plot ProQuest extreme outliers
 modz1prouqestoutliers <- subset(modz, proquest >= 3.5 | proquest <= -3.5)
-modzpqout <- ggplot(modz1prouqestoutliers, aes(searchset, proquest)) +
-  geom_col() + labs(x = "", y = "ProQuest") + theme_bw() + coord_flip() +
+modzpqout <- ggplot(modz1prouqestoutliers, aes(searchset, proquest,
+                                               label = round(proquest, 2))) +
+  geom_col() + geom_text() +
+  labs(x = "", y = "ProQuest") + theme_bw() + coord_flip() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, colour = "black"))
 modzpqout
 ggsave("plots/figure-4-proquest-extreme-outliers.svg", height = 9, width = 12,
@@ -253,10 +266,13 @@ ggsave("plots/figure-4-proquest-extreme-outliers.svg", height = 9, width = 12,
 ggsave("plots/figure-4-proquest-extreme-outliers.png", device = png(),
        height = 9, width = 12, dpi = 300)
 
+dev.off()
+
 ##### FIGURE 5: Web of Science Extreme Outliers #####
 modz3wosoutliers <- subset(modz, wos >= 3.5 | wos <= -3.5)
-modzwosout <- ggplot(modz3wosoutliers, aes(searchset, wos)) +
-  geom_col() +
+modzwosout <- ggplot(modz3wosoutliers, aes(searchset, wos,
+                                           label = round(wos, 2))) +
+  geom_col() + geom_text() +
   labs(x = "", y = "Web of Science") + theme_bw() + coord_flip() +
        theme(axis.text.x =
              element_text(angle = 45, hjust = 1, colour = "black"))
@@ -266,6 +282,8 @@ ggsave("plots/figure-5-wos-extreme-outliers.svg", height = 9, width = 12,
 
 ggsave("plots/figure-5-wos-extreme-outliers.png", device = png(),
        height = 9, width = 12, dpi = 300)
+
+dev.off()
 
 # Save data as tables tables and incorporate into LibreOffice
 library("xtable")
