@@ -1,3 +1,12 @@
+# Source packages 
+# gridExtra is for a multiplot
+library("magicfor")
+library("ggplot2")
+library("gridExtra")
+library("dplyr")
+library("reshape2")
+library("xtable")
+ 
 # Read search counts
 source("data.R")
 
@@ -28,7 +37,6 @@ modz <- function(searches, x) {
 }
 
 # save output of for loop into a dataframe; bless this package!
-library("magicfor")
 magic_for(print, silent = TRUE)
 
 for (i in 1:29) {
@@ -48,16 +56,8 @@ modz[c(13, 16, 17, 20), ] <- c(0, 0, 0, 0)
 # Create column for search sets
 modz$searchset <- rownames(searches)
 
-# Plots
-# gridExtra is for a multiplot
-library("ggplot2")
-library("svglite")
-library("gridExtra")
-
 ##### FIGURE 1: Raw Scores #####
 # To convert 'searches' data frame in long format for grouped bar chart
-library("dplyr")
-library("reshape2")
 searcheslong <- melt(searches, id = "searchset")
 colnames(searcheslong) <- c("searchset", "databases", "searchcount")
 
@@ -213,15 +213,19 @@ dev.off()
 modz1 <- subset(modz, proquest <= 3.5 & proquest >= -3.5)
 mz1 <- ggplot(modz1, aes(searchset, proquest, label = round(proquest, 2))) +
   geom_col() + geom_text() +
-  labs(x = "Search Set", y = "ProQuest") + theme_bw() + coord_flip() +
+  labs(x = "Search Set", y = "") + theme_bw() +
+  coord_flip(ylim = c(-3.5, 3.5), xlim = c(1, 26)) +
+  annotate("text", x = 20, y = 2, label = "ProQuest") +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
-
+  
 modz2 <- subset(modz, ebscohost <= 3.5 & ebscohost >= -3.5)
 mz2 <- ggplot(modz2, aes(searchset, ebscohost, label = round(ebscohost, 2))) +
   geom_col() + geom_text() +
-  labs(x = "", y = "EBSCOhost") + theme_bw() + coord_flip() +
+  labs(x = "Search Set", y = "") + theme_bw() +
+  coord_flip(ylim = c(-3.5, 3.5), xlim = c(1, 29)) +
+  annotate("text", x = 20, y = 2, label = "EBSCOhost") +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
@@ -229,7 +233,9 @@ mz2 <- ggplot(modz2, aes(searchset, ebscohost, label = round(ebscohost, 2))) +
 modz3 <- subset(modz, wos <= 3.5 & wos >= -3.5)
 mz3 <- ggplot(modz3, aes(searchset, wos, label = round(wos, 2))) +
   geom_col() + geom_text() +
-  labs(x = "Search Set", y = "Web of Science") + theme_bw() + coord_flip() +
+  labs(x = "Search Set", y = "") + theme_bw() +
+  coord_flip(ylim = c(-3.5, 3.5), xlim = c(1, 24)) +
+  annotate("text", x = 20, y = 2, label = "Web of Science") +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
@@ -237,56 +243,52 @@ mz3 <- ggplot(modz3, aes(searchset, wos, label = round(wos, 2))) +
 modz4 <- subset(modz, ovid <= 3.5 & ovid >= -3.5)
 mz4 <- ggplot(modz4, aes(searchset, ovid, label = round(ovid, 2))) +
   geom_col() + geom_text() +
-  labs(x = "", y = "Ovid") + theme_bw() + coord_flip() +
+  labs(x = "Search Set", y = "") + theme_bw() +
+  coord_flip(ylim = c(-3.5, 3.5), xlim = c(1, 29)) +
+  annotate("text", x = 20, y = 2, label = "Ovid") +
        theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
                                    colour = "black"))
 
-fig3 <- grid.arrange(mz1, mz2, mz3, mz4, ncol = 2, nrow = 2)
+fig3 <- grid.arrange(mz1, mz2, mz3, mz4, ncol = 1, nrow = 4)
+
 ggsave("plots/figure-3-modz-scores.svg", plot = fig3,
-       height = 9, width = 12, dpi = 300)
+       height = 12, width = 9, dpi = 300)
 
 ggsave("plots/figure-3-modz-scores.png", plot = fig3, device = png(),
-       height = 9, width = 12, dpi = 300)
+       height = 12, width = 9, dpi = 300)
 
 dev.off()
 
-##### FIGURE 4: ProQuest Extreme Outliers #####
+##### FIGURE 4: ProQuest, Web of Science Extreme Outliers #####
+# Plot WoS extreme outliers
+modzwosoutliers <- subset(modz, wos >= 3.5 | wos <= -3.5)
+modzwosout <- ggplot(modzwosoutliers, aes(searchset, wos,
+                                           label = round(wos, 2))) +
+  geom_col() + geom_text() +
+  labs(x = "Search Set", y = "Web of Science") + theme_bw() + coord_flip() +
+       theme(axis.text.x =
+             element_text(angle = 45, hjust = 1, colour = "black"))
+
 # Plot ProQuest extreme outliers
-modz1prouqestoutliers <- subset(modz, proquest >= 3.5 | proquest <= -3.5)
-modzpqout <- ggplot(modz1prouqestoutliers, aes(searchset, proquest,
+modzprouqestoutliers <- subset(modz, proquest >= 3.5 | proquest <= -3.5)
+modzpqout <- ggplot(modzprouqestoutliers, aes(searchset, proquest,
                                                label = round(proquest, 2))) +
   geom_col() + geom_text() +
   labs(x = "", y = "ProQuest") + theme_bw() + coord_flip() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, colour = "black"))
-modzpqout
-ggsave("plots/figure-4-proquest-extreme-outliers.svg", height = 9, width = 12,
-       dpi = 300)
 
-ggsave("plots/figure-4-proquest-extreme-outliers.png", device = png(),
+fig4 <- grid.arrange(modzwosout, modzpqout, ncol = 2, nrow = 1)
+
+ggsave("plots/figure-4-modz-ext-outliers.svg", plot = fig4,
        height = 9, width = 12, dpi = 300)
 
-dev.off()
-
-##### FIGURE 5: Web of Science Extreme Outliers #####
-modz3wosoutliers <- subset(modz, wos >= 3.5 | wos <= -3.5)
-modzwosout <- ggplot(modz3wosoutliers, aes(searchset, wos,
-                                           label = round(wos, 2))) +
-  geom_col() + geom_text() +
-  labs(x = "", y = "Web of Science") + theme_bw() + coord_flip() +
-       theme(axis.text.x =
-             element_text(angle = 45, hjust = 1, colour = "black"))
-modzwosout
-ggsave("plots/figure-5-wos-extreme-outliers.svg", height = 9, width = 12,
-       dpi = 300)
-
-ggsave("plots/figure-5-wos-extreme-outliers.png", device = png(),
+ggsave("plots/figure-4-modz-ext-outliers.png", plot = fig4, device = png(),
        height = 9, width = 12, dpi = 300)
 
 dev.off()
 
 # Save data as tables tables and incorporate into LibreOffice
-library("xtable")
 modztable <- as.data.frame(round(modz[, c(2, 3, 4, 5)], 3))
 
 searchdiffs <- as.data.frame(cbind(searches$proquest - searches$pubmed,
