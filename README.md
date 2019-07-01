@@ -1,8 +1,7 @@
-# Information Retrieval
-## MEDLINE Study
+# MEDLINE Study
 
-Research project files and code for a project testing search queries on MEDLINE
-databases.
+Information retrieval and database research project files and code for
+a project testing search queries on MEDLINE databases.
 
 The publication based on this research is:
 
